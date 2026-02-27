@@ -15,6 +15,7 @@ jobs:
           php-version: '8.4'
           extensions: sqlite3,sockets
       - run: composer install
+      - run: cp .env.example .env && php artisan key:generate
       - run: php artisan test
 
   build:
