@@ -1,0 +1,25 @@
+{
+    frankenphp
+    order mercure after encode
+    auto_https off
+
+    servers {
+        protocols h1 h2c
+    }
+}
+
+:{$STAN_PORT:8741} {
+    root * public/
+
+    encode zstd br gzip
+
+    mercure {
+        transport_url bolt:///tmp/mercure.db
+        anonymous
+        cors_origins *
+    }
+
+    php_server {
+        worker public/frankenphp-worker.php
+    }
+}

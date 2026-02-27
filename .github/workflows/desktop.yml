@@ -1,0 +1,107 @@
+name: Build Desktop
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-sidecar:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary: stan-x86_64-unknown-linux-gnu
+            build: bash build.sh linux-amd64
+            artifact: stan-linux-amd64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            binary: stan-aarch64-apple-darwin
+            build: bash build.sh macos-arm64
+            artifact: stan-macos-arm64
+          - os: macos-13
+            target: x86_64-apple-darwin
+            binary: stan-x86_64-apple-darwin
+            build: bash build.sh macos-amd64
+            artifact: stan-macos-amd64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary: stan-x86_64-pc-windows-msvc.exe
+            build: bash build.sh windows-amd64
+            artifact: stan-windows-amd64.exe
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sqlite3,sockets
+
+      - run: ${{ matrix.build }}
+
+      - run: mv ${{ matrix.artifact }} desktop/src-tauri/binaries/${{ matrix.binary }}
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sidecar-${{ matrix.target }}
+          path: desktop/src-tauri/binaries/${{ matrix.binary }}
+
+  build-desktop:
+    needs: build-sidecar
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: macos-latest
+            target: aarch64-apple-darwin
+          - os: macos-13
+            target: x86_64-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sidecar-${{ matrix.target }}
+          path: desktop/src-tauri/binaries/
+
+      - name: Make sidecar executable
+        if: runner.os != 'Windows'
+        run: chmod +x desktop/src-tauri/binaries/stan-*
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install Tauri CLI
+        working-directory: desktop
+        run: npm install
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: desktop
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Stan ${{ github.ref_name }}'
+          releaseBody: 'Desktop release for Stan ${{ github.ref_name }}'
+          releaseDraft: true

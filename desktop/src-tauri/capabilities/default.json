@@ -1,0 +1,16 @@
+{
+    "$schema": "https://raw.githubusercontent.com/nicegui/nicegui/main/nicegui/.well-known/tauri/capabilities-schema.json",
+    "identifier": "default",
+    "description": "Default capability for Stan desktop",
+    "windows": ["main"],
+    "permissions": [
+        "core:default",
+        "shell:allow-execute",
+        "shell:allow-spawn",
+        "shell:allow-stdin-write",
+        "shell:allow-kill",
+        "shell:default",
+        "process:default",
+        "process:allow-exit"
+    ]
+}

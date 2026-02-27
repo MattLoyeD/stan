@@ -1,0 +1,30 @@
+@import 'primeicons/primeicons.css';
+
+:root {
+    --stan-primary: #4F46E5;
+    --stan-bg-dark: #0F172A;
+    --stan-bg-surface: #1E293B;
+    --stan-text: #E2E8F0;
+    --stan-text-muted: #94A3B8;
+    --stan-border: #334155;
+    --stan-success: #10B981;
+    --stan-danger: #EF4444;
+    --stan-warning: #F59E0B;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #app {
+    height: 100%;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    background: var(--stan-bg-dark);
+    color: var(--stan-text);
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    background: var(--stan-bg-surface);
+}

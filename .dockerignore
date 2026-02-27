@@ -1,0 +1,40 @@
+# VCS
+.git/
+.github/
+
+# Dependencies (rebuilt in Docker)
+vendor/
+node_modules/
+
+# Build artifacts
+stan-*
+public/build/
+
+# Tests (not needed in binary)
+tests/
+
+# Environment / secrets
+.env
+.env.backup
+.env.production
+
+# Runtime data
+database/database.sqlite
+storage/logs/*.log
+
+# IDE / Editor
+.fleet/
+.idea/
+.nova/
+.vscode/
+.zed/
+.phpunit.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs (not needed in binary)
+PLAN.md
+REPORT.md
+README.md

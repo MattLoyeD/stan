@@ -1,0 +1,44 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build artifacts
+/public/build/
+/public/hot
+/public/storage
+/stan-*
+
+# Environment
+.env
+.env.backup
+.env.production
+
+# Storage
+/storage/*.key
+/storage/pail
+*.log
+
+# Database
+/database/database.sqlite
+
+# IDE / Editor
+/.fleet/
+/.idea/
+/.nova/
+/.phpunit.cache/
+/.vscode/
+/.zed/
+
+# PHP
+.phpactor.json
+.phpunit.result.cache
+/auth.json
+
+# Tauri
+desktop/src-tauri/target/
+desktop/src-tauri/binaries/
+desktop/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
