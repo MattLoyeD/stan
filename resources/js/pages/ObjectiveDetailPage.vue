@@ -67,6 +67,16 @@ function statusIcon(status: string) {
             </template>
         </Card>
 
+        <Card v-if="current.is_swarm" class="swarm-banner">
+            <template #content>
+                <div class="swarm-info">
+                    <i class="pi pi-sitemap"></i>
+                    <span>This is a swarm objective with {{ current.swarm_tasks_count ?? 0 }} tasks</span>
+                    <Button label="View Swarm" icon="pi pi-external-link" size="small" @click="router.push(`/objectives/${objectiveId}/swarm`)" />
+                </div>
+            </template>
+        </Card>
+
         <Card v-if="current.result_summary" class="result-card">
             <template #title>Result</template>
             <template #content>
@@ -74,7 +84,7 @@ function statusIcon(status: string) {
             </template>
         </Card>
 
-        <Card>
+        <Card v-if="!current.is_swarm">
             <template #title>Steps</template>
             <template #content>
                 <Timeline :value="steps" align="left">
@@ -114,6 +124,9 @@ function statusIcon(status: string) {
 .budget-text { font-size: 0.875rem; color: var(--stan-text-muted); }
 .result-card { margin-bottom: 1rem; }
 .result-text { white-space: pre-wrap; font-size: 0.875rem; }
+.swarm-banner { margin-bottom: 1rem; }
+.swarm-info { display: flex; align-items: center; gap: 0.75rem; }
+.swarm-info i { font-size: 1.25rem; color: var(--stan-primary); }
 .step-content { padding: 0.5rem 0; }
 .step-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
 .step-tool { font-size: 0.75rem; background: var(--stan-bg-dark); padding: 2px 8px; border-radius: 4px; }

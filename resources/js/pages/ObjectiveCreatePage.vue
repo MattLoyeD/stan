@@ -9,6 +9,7 @@ import Textarea from 'primevue/textarea';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
+import ToggleSwitch from 'primevue/toggleswitch';
 
 const router = useRouter();
 const toast = useToast();
@@ -20,12 +21,23 @@ const form = ref({
     token_budget: 100000,
     llm_provider: null as string | null,
     llm_model: null as string | null,
+    is_swarm: false,
+    swarm_config: {
+        max_parallel: 3,
+        failure_strategy: 'continue',
+    },
 });
 
 const providers = [
     { label: 'Anthropic', value: 'anthropic' },
     { label: 'OpenAI', value: 'openai' },
     { label: 'Ollama', value: 'ollama' },
+];
+
+const failureStrategies = [
+    { label: 'Continue on failure', value: 'continue' },
+    { label: 'Stop all on failure', value: 'stop_all' },
+    { label: 'Retry then continue', value: 'retry' },
 ];
 
 async function submit() {
@@ -64,9 +76,28 @@ async function submit() {
                             <Select v-model="form.llm_provider" :options="providers" optionLabel="label" optionValue="value" placeholder="Default" />
                         </div>
                     </div>
+                    <div class="field">
+                        <label>Swarm Mode</label>
+                        <div class="swarm-toggle">
+                            <ToggleSwitch v-model="form.is_swarm" />
+                            <span>Enable multi-agent swarm decomposition</span>
+                        </div>
+                    </div>
+                    <template v-if="form.is_swarm">
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Max Parallel Tasks</label>
+                                <InputNumber v-model="form.swarm_config.max_parallel" :min="1" :max="10" />
+                            </div>
+                            <div class="field">
+                                <label>Failure Strategy</label>
+                                <Select v-model="form.swarm_config.failure_strategy" :options="failureStrategies" optionLabel="label" optionValue="value" />
+                            </div>
+                        </div>
+                    </template>
                     <div class="actions">
                         <Button label="Cancel" severity="secondary" @click="router.push('/')" />
-                        <Button label="Create Objective" icon="pi pi-play" @click="submit" />
+                        <Button :label="form.is_swarm ? 'Create Swarm' : 'Create Objective'" icon="pi pi-play" @click="submit" />
                     </div>
                 </div>
             </template>
@@ -82,6 +113,7 @@ async function submit() {
 .field label { font-weight: 600; font-size: 0.875rem; color: var(--stan-text-muted); }
 .field-row { display: flex; gap: 1rem; }
 .field-row .field { flex: 1; }
+.swarm-toggle { display: flex; align-items: center; gap: 0.75rem; }
 .actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
 .w-full { width: 100%; }
 </style>

@@ -21,6 +21,8 @@ class Objective extends Model
         'llm_provider',
         'llm_model',
         'result_summary',
+        'is_swarm',
+        'swarm_config',
         'started_at',
         'completed_at',
     ];
@@ -31,6 +33,8 @@ class Objective extends Model
             'status' => ObjectiveStatus::class,
             'constraints' => 'array',
             'allowed_tools' => 'array',
+            'is_swarm' => 'boolean',
+            'swarm_config' => 'array',
             'started_at' => 'datetime',
             'completed_at' => 'datetime',
         ];
@@ -44,6 +48,11 @@ class Objective extends Model
     public function steps(): HasMany
     {
         return $this->hasMany(ObjectiveStep::class)->orderBy('sequence');
+    }
+
+    public function swarmTasks(): HasMany
+    {
+        return $this->hasMany(SwarmTask::class)->orderBy('sequence');
     }
 
     public function remainingBudget(): int

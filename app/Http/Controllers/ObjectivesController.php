@@ -32,6 +32,10 @@ class ObjectivesController extends Controller
             'token_budget' => ['nullable', 'integer', 'min:1000', 'max:1000000'],
             'llm_provider' => ['nullable', 'string'],
             'llm_model' => ['nullable', 'string'],
+            'is_swarm' => ['nullable', 'boolean'],
+            'swarm_config' => ['nullable', 'array'],
+            'swarm_config.max_parallel' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'swarm_config.failure_strategy' => ['nullable', 'string', 'in:continue,stop_all,retry'],
         ]);
 
         $objective = $request->user()->objectives()->create([
@@ -40,7 +44,11 @@ class ObjectivesController extends Controller
             'token_budget' => $validated['token_budget'] ?? config('stan.security.default_token_budget'),
         ]);
 
-        RunObjective::dispatch($objective);
+        if ($objective->is_swarm) {
+            \App\Jobs\RunSwarmObjective::dispatch($objective);
+        } else {
+            RunObjective::dispatch($objective);
+        }
 
         return (new ObjectiveResource($objective))
             ->response()
@@ -51,6 +59,11 @@ class ObjectivesController extends Controller
     {
         $this->authorize($request, $objective);
         $objective->load('steps');
+
+        if ($objective->is_swarm) {
+            $objective->loadCount('swarmTasks');
+            $objective->load('swarmTasks');
+        }
 
         return (new ObjectiveResource($objective))->response();
     }
