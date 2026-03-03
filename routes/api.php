@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChannelsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\McpServersController;
 use App\Http\Controllers\ObjectivesController;
+use App\Http\Controllers\SwarmTasksController;
 use App\Http\Controllers\PluginsController;
 use App\Http\Controllers\ProvidersController;
 use App\Http\Controllers\SessionsController;
@@ -27,6 +29,8 @@ Route::middleware(['App\Http\Middleware\LocalhostOnly', 'App\Http\Middleware\Val
     Route::post('/objectives/{objective}/resume', [ObjectivesController::class, 'resume']);
     Route::post('/objectives/{objective}/cancel', [ObjectivesController::class, 'cancel']);
     Route::get('/objectives/{objective}/steps', [StepsController::class, 'index']);
+    Route::get('/objectives/{objective}/swarm-tasks', [SwarmTasksController::class, 'index']);
+    Route::get('/swarm-tasks/{swarmTask}', [SwarmTasksController::class, 'show']);
 
     Route::apiResource('sessions', SessionsController::class)->only(['index', 'store', 'show']);
     Route::get('/sessions/{session}/messages', [SessionsController::class, 'messages']);
@@ -41,6 +45,11 @@ Route::middleware(['App\Http\Middleware\LocalhostOnly', 'App\Http\Middleware\Val
 
     Route::apiResource('providers', ProvidersController::class)->only(['index', 'store', 'destroy']);
     Route::post('/providers/{provider}/test', [ProvidersController::class, 'test']);
+
+    Route::apiResource('mcp-servers', McpServersController::class)->only(['index', 'store', 'destroy']);
+    Route::post('/mcp-servers/{mcpServer}/test', [McpServersController::class, 'test']);
+    Route::post('/mcp-servers/{mcpServer}/discover', [McpServersController::class, 'discover']);
+    Route::post('/mcp-servers/{mcpServer}/toggle', [McpServersController::class, 'toggle']);
 
     Route::apiResource('plugins', PluginsController::class)->only(['index', 'destroy']);
     Route::post('/plugins/{plugin}/toggle', [PluginsController::class, 'toggle']);

@@ -67,6 +67,7 @@ const menuItems = ref([
     { label: 'Sessions', icon: 'pi pi-code', items: [
         { label: 'New Session', icon: 'pi pi-plus', command: () => router.push('/sessions/create') },
     ]},
+    { label: 'MCP Servers', icon: 'pi pi-server', command: () => router.push('/mcp-servers') },
     { label: 'Plugins', icon: 'pi pi-box', command: () => router.push('/plugins') },
     { label: 'Channels', icon: 'pi pi-comments', command: () => router.push('/channels') },
     { label: 'Audit Log', icon: 'pi pi-shield', command: () => router.push('/audit') },

@@ -12,6 +12,7 @@ use App\Services\Tools\Implementations\FileWriteTool;
 use App\Services\Tools\Implementations\ShellTool;
 use App\Services\Tools\Implementations\WebFetchTool;
 use App\Services\Tools\Implementations\WebSearchTool;
+use App\Services\Mcp\McpManager;
 use App\Services\Tools\ToolRegistry;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(PermissionGate::class);
         $this->app->singleton(SandboxManager::class);
+
+        $this->app->singleton(McpManager::class, function ($app) {
+            return new McpManager($app->make(ToolRegistry::class));
+        });
     }
 
     public function boot(): void

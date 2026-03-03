@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Setting::class);
     }
+
+    public function mcpServers(): HasMany
+    {
+        return $this->hasMany(McpServerConfig::class);
+    }
 }

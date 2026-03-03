@@ -8,4 +8,5 @@ enum ToolCategory: string
     case Filesystem = 'filesystem';
     case Web = 'web';
     case Api = 'api';
+    case External = 'external';
 }

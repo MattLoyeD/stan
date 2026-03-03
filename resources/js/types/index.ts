@@ -15,12 +15,16 @@ export interface Objective {
     tokens_used: number;
     llm_provider: string | null;
     llm_model: string | null;
+    is_swarm: boolean;
+    swarm_config: { max_parallel?: number; failure_strategy?: string; coordinator_budget_pct?: number } | null;
     result_summary: string | null;
     started_at: string | null;
     completed_at: string | null;
     created_at: string;
     steps_count?: number;
     steps?: Step[];
+    swarm_tasks_count?: number;
+    swarm_tasks?: SwarmTask[];
 }
 
 export interface Step {
@@ -66,10 +70,53 @@ export interface SessionMessage {
     created_at: string;
 }
 
+export interface McpServer {
+    id: number;
+    name: string;
+    transport: 'stdio' | 'sse';
+    command: string | null;
+    args: string[] | null;
+    url: string | null;
+    has_api_key: boolean;
+    default_risk_level: 'low' | 'medium' | 'high' | 'critical';
+    tool_overrides: Record<string, unknown> | null;
+    is_active: boolean;
+    cached_tools: McpTool[] | null;
+    last_connected_at: string | null;
+    created_at: string;
+}
+
+export interface McpTool {
+    name: string;
+    description: string;
+    inputSchema: Record<string, unknown>;
+}
+
+export interface SwarmTask {
+    id: number;
+    objective_id: number;
+    role: string;
+    instructions: string;
+    goal: string;
+    allowed_tools: string[] | null;
+    status: 'pending' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
+    token_budget: number;
+    tokens_used: number;
+    sequence: number;
+    depends_on: number[] | null;
+    result: string | null;
+    error: string | null;
+    llm_provider: string | null;
+    llm_model: string | null;
+    started_at: string | null;
+    completed_at: string | null;
+    created_at: string;
+}
+
 export interface ToolExecution {
     id: number;
     tool_name: string;
-    tool_category: 'shell' | 'filesystem' | 'web' | 'api';
+    tool_category: 'shell' | 'filesystem' | 'web' | 'api' | 'external';
     risk_level: 'low' | 'medium' | 'high' | 'critical';
     input: Record<string, unknown>;
     output: string | null;

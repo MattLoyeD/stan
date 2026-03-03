@@ -39,6 +39,19 @@ return [
         'api_call' => 'always_ask',
     ],
 
+    'swarm' => [
+        'max_parallel_tasks' => 3,
+        'default_failure_strategy' => 'continue',
+        'coordinator_budget_pct' => 20,
+        'max_tasks_per_swarm' => 10,
+    ],
+
+    'mcp' => [
+        'default_risk_level' => 'high',
+        'connection_timeout_ms' => 10000,
+        'request_timeout_ms' => 30000,
+    ],
+
     'mercure' => [
         'url' => env('MERCURE_URL', '/.well-known/mercure'),
         'jwt_secret' => env('MERCURE_JWT_SECRET'),

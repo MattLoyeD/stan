@@ -54,6 +54,10 @@ class PermissionGate
             return PermissionLevel::from($defaults[$toolName]);
         }
 
+        if (str_starts_with($toolName, 'mcp_')) {
+            return PermissionLevel::AlwaysAsk;
+        }
+
         return PermissionLevel::ExplicitApprove;
     }
 

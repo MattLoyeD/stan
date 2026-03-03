@@ -6,6 +6,7 @@ use App\Enums\PermissionLevel;
 use App\Enums\ToolCategory;
 use App\Enums\ToolRiskLevel;
 use App\Models\ToolExecution;
+use App\Services\Security\Policies\ExternalToolPolicy;
 use App\Services\Security\Policies\FilesystemPolicy;
 use App\Services\Security\Policies\NetworkPolicy;
 use App\Services\Security\Policies\ProcessPolicy;
@@ -20,6 +21,7 @@ class Guardian
         private FilesystemPolicy $filesystemPolicy,
         private NetworkPolicy $networkPolicy,
         private ProcessPolicy $processPolicy,
+        private ExternalToolPolicy $externalToolPolicy,
     ) {}
 
     public function evaluate(
@@ -52,6 +54,12 @@ class Guardian
             $command = $input['command'] ?? '';
             if (! $this->processPolicy->isAllowed($command)) {
                 return GuardianVerdict::denied("Command blocked by process policy");
+            }
+        }
+
+        if ($category === ToolCategory::External) {
+            if (! $this->externalToolPolicy->isAllowed($toolName, $userId)) {
+                return GuardianVerdict::denied("External MCP tool '{$toolName}' is not allowed");
             }
         }
 
